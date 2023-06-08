@@ -1,55 +1,61 @@
+<!DOCTYPE html>
+<html>
 <head>
-    <!-- Import the component -->
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-    <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
-  </head>
-  
-  
-  
-  <!DOCTYPE html>
-  <html>
-  <head>
-    <title>My AR Web App</title>
-  
-    <!-- Import the component -->
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-    <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
-  
-    <style>
-      model-viewer {
-        width: 100%;
-        height: 300px;
-        --poster-color: transparent;
-      }
-    </style>
-  </head>
-  <body>
-  
-  <!-- The 3D model and AR view -->
-  <model-viewer id="model" src="https://raw.githubusercontent.com/SerjoschDuering/speckleAR_test/main/scootaviatripousse.glb" alt="A 3D model of something" ar ar-modes="webxr scene-viewer quick-look" environment-image="neutral" auto-rotate camera-controls></model-viewer>
-  
-  <!-- UI widgets -->
-  <div id="ui">
-    <h2>Select a Model</h2>
-    <input type="radio" id="model1" name="model" value="model1">
-    <label for="model1">Model 1</label><br>
-    <input type="radio" id="model2" name="model" value="model2">
-    <label for="model2">Model 2</label><br>
-  </div>
-  
-  <script>
-    // Handle changes to the radio buttons
-    document.getElementById('ui').addEventListener('change', (event) => {
-      const modelViewer = document.getElementById('model');
-      
-      if (event.target.value === 'model1') {
-        modelViewer.src = 'https://your-git-url/model1.glb';
-      } else if (event.target.value === 'model2') {
-        modelViewer.src = 'https://your-git-url/model2.glb';scootaviatripousse.glb
-      }
-    });
-  </script>
-  
-  </body>
-  </html>
-  
+  <title>My AR Web App</title>
+
+  <style>
+    model-viewer {
+      width: 100%;
+      height: 300px;
+      --poster-color: transparent;
+    }
+  </style>
+
+  <!-- Import the component -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+  <script type="module" src="https://threejs.org/build/three.module.js"></script>
+  <script type="module" src="https://threejs.org/examples/jsm/exporters/GLTFExporter.js"></script>
+  <script type="module" src="https://cdn.jsdelivr.net/gh/SerjoschDuering/speckleAR_test/main/ViewerObjectLoader.js"></script>
+</head>
+<body>
+
+<!-- The 3D model and AR view -->
+<model-viewer id="model" alt="A 3D model of something" ar ar-modes="webxr scene-viewer quick-look" environment-image="neutral" auto-rotate camera-controls></model-viewer>
+
+<script type="module">
+  import { GLTFExporter } from 'https://threejs.org/examples/jsm/exporters/GLTFExporter.js';
+  import ViewerObjectLoader from 'https://cdn.jsdelivr.net/gh/github.com/SerjoschDuering/speckleAR_test/main/ViewerObjectLoader.js';
+
+  let objectUrl = "https://speckle.xyz/streams/0e7f5d4c86/commits/a95dec921b";
+  let speckleToken = '52566d1047b881764e16ad238356abeb2fc35d8b42'; // Uncomment and provide your token if required
+
+  let viewerObjectLoader = new ViewerObjectLoader(objectUrl);
+  let material = new THREE.MeshPhongMaterial({ color: 0xf0f8ff });
+  let container = new THREE.Group();
+
+  viewerObjectLoader.load(function(o) {
+    let mesh = new THREE.Mesh(o.bufferGeometry, material);
+    mesh.material.flatShading = THREE.SmoothShading;
+    if (mesh.geometry.boundingSphere.center) {
+      container.add(mesh);
+    }
+  });
+
+  let exporter = new GLTFExporter();
+  exporter.parse(container, function(result) {
+    if (result instanceof ArrayBuffer) {
+      console.error('GLTFExporter output an ArrayBuffer, but a JSON object is expected');
+    } else {
+      let output = JSON.stringify(result, null, 2);
+      let blob = new Blob([output], { type: 'text/plain' });
+      let url = URL.createObjectURL(blob);
+
+      let modelViewerElement = document.querySelector('model-viewer');
+      modelViewerElement.setAttribute('src', url);
+    }
+  });
+</script>
+
+</body>
+</html>
