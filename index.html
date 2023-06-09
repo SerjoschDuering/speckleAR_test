@@ -14,9 +14,7 @@
   <!-- Import the component -->
   <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
   <script nomodule src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
-  <script type="module" src="https://threejs.org/build/three.module.js"></script>
-  <script type="module" src="https://threejs.org/examples/jsm/exporters/GLTFExporter.js"></script>
-  <script type="module" src="https://cdn.jsdelivr.net/gh/SerjoschDuering/speckleAR_test/main/ViewerObjectLoader.js"></script>
+  <script type="module" src="./ViewerObjectLoader.js"></script>
 </head>
 <body>
 
@@ -24,8 +22,9 @@
 <model-viewer id="model" alt="A 3D model of something" ar ar-modes="webxr scene-viewer quick-look" environment-image="neutral" auto-rotate camera-controls></model-viewer>
 
 <script type="module">
+  import * as THREE from 'https://threejs.org/build/three.module.js';
   import { GLTFExporter } from 'https://threejs.org/examples/jsm/exporters/GLTFExporter.js';
-  import ViewerObjectLoader from 'https://cdn.jsdelivr.net/gh/github.com/SerjoschDuering/speckleAR_test/main/ViewerObjectLoader.js';
+  import ViewerObjectLoader from './ViewerObjectLoader.js';
 
   let objectUrl = "https://speckle.xyz/streams/0e7f5d4c86/commits/a95dec921b";
   let speckleToken = '52566d1047b881764e16ad238356abeb2fc35d8b42'; // Uncomment and provide your token if required
